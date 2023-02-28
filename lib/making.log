@@ -1,0 +1,68 @@
+
+  libbpf
+make -C libbpf/src CFLAGS="-g -O2 -Werror -Wall -fPIC" 
+make[1]: Entering directory '/root/xdp-tools/lib/libbpf/src'
+mkdir -p staticobjs
+cc -I. -I../include -I../include/uapi -g -O2 -Werror -Wall -fPIC -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64   -c bpf.c -o staticobjs/bpf.o
+cc -I. -I../include -I../include/uapi -g -O2 -Werror -Wall -fPIC -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64   -c btf.c -o staticobjs/btf.o
+cc -I. -I../include -I../include/uapi -g -O2 -Werror -Wall -fPIC -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64   -c libbpf.c -o staticobjs/libbpf.o
+cc -I. -I../include -I../include/uapi -g -O2 -Werror -Wall -fPIC -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64   -c libbpf_errno.c -o staticobjs/libbpf_errno.o
+cc -I. -I../include -I../include/uapi -g -O2 -Werror -Wall -fPIC -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64   -c netlink.c -o staticobjs/netlink.o
+cc -I. -I../include -I../include/uapi -g -O2 -Werror -Wall -fPIC -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64   -c nlattr.c -o staticobjs/nlattr.o
+cc -I. -I../include -I../include/uapi -g -O2 -Werror -Wall -fPIC -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64   -c str_error.c -o staticobjs/str_error.o
+cc -I. -I../include -I../include/uapi -g -O2 -Werror -Wall -fPIC -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64   -c libbpf_probes.c -o staticobjs/libbpf_probes.o
+cc -I. -I../include -I../include/uapi -g -O2 -Werror -Wall -fPIC -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64   -c bpf_prog_linfo.c -o staticobjs/bpf_prog_linfo.o
+cc -I. -I../include -I../include/uapi -g -O2 -Werror -Wall -fPIC -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64   -c btf_dump.c -o staticobjs/btf_dump.o
+cc -I. -I../include -I../include/uapi -g -O2 -Werror -Wall -fPIC -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64   -c hashmap.c -o staticobjs/hashmap.o
+cc -I. -I../include -I../include/uapi -g -O2 -Werror -Wall -fPIC -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64   -c ringbuf.c -o staticobjs/ringbuf.o
+cc -I. -I../include -I../include/uapi -g -O2 -Werror -Wall -fPIC -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64   -c strset.c -o staticobjs/strset.o
+cc -I. -I../include -I../include/uapi -g -O2 -Werror -Wall -fPIC -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64   -c linker.c -o staticobjs/linker.o
+cc -I. -I../include -I../include/uapi -g -O2 -Werror -Wall -fPIC -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64   -c gen_loader.c -o staticobjs/gen_loader.o
+cc -I. -I../include -I../include/uapi -g -O2 -Werror -Wall -fPIC -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64   -c relo_core.c -o staticobjs/relo_core.o
+cc -I. -I../include -I../include/uapi -g -O2 -Werror -Wall -fPIC -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64   -c usdt.c -o staticobjs/usdt.o
+ar rcs libbpf.a staticobjs/bpf.o staticobjs/btf.o staticobjs/libbpf.o staticobjs/libbpf_errno.o staticobjs/netlink.o staticobjs/nlattr.o staticobjs/str_error.o staticobjs/libbpf_probes.o staticobjs/bpf_prog_linfo.o staticobjs/btf_dump.o staticobjs/hashmap.o staticobjs/ringbuf.o staticobjs/strset.o staticobjs/linker.o staticobjs/gen_loader.o staticobjs/relo_core.o staticobjs/usdt.o
+mkdir -p sharedobjs
+cc -I. -I../include -I../include/uapi -g -O2 -Werror -Wall -fPIC -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64  -fPIC -fvisibility=hidden -DSHARED  -c bpf.c -o sharedobjs/bpf.o
+cc -I. -I../include -I../include/uapi -g -O2 -Werror -Wall -fPIC -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64  -fPIC -fvisibility=hidden -DSHARED  -c btf.c -o sharedobjs/btf.o
+cc -I. -I../include -I../include/uapi -g -O2 -Werror -Wall -fPIC -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64  -fPIC -fvisibility=hidden -DSHARED  -c libbpf.c -o sharedobjs/libbpf.o
+cc -I. -I../include -I../include/uapi -g -O2 -Werror -Wall -fPIC -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64  -fPIC -fvisibility=hidden -DSHARED  -c libbpf_errno.c -o sharedobjs/libbpf_errno.o
+cc -I. -I../include -I../include/uapi -g -O2 -Werror -Wall -fPIC -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64  -fPIC -fvisibility=hidden -DSHARED  -c netlink.c -o sharedobjs/netlink.o
+cc -I. -I../include -I../include/uapi -g -O2 -Werror -Wall -fPIC -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64  -fPIC -fvisibility=hidden -DSHARED  -c nlattr.c -o sharedobjs/nlattr.o
+cc -I. -I../include -I../include/uapi -g -O2 -Werror -Wall -fPIC -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64  -fPIC -fvisibility=hidden -DSHARED  -c str_error.c -o sharedobjs/str_error.o
+cc -I. -I../include -I../include/uapi -g -O2 -Werror -Wall -fPIC -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64  -fPIC -fvisibility=hidden -DSHARED  -c libbpf_probes.c -o sharedobjs/libbpf_probes.o
+cc -I. -I../include -I../include/uapi -g -O2 -Werror -Wall -fPIC -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64  -fPIC -fvisibility=hidden -DSHARED  -c bpf_prog_linfo.c -o sharedobjs/bpf_prog_linfo.o
+cc -I. -I../include -I../include/uapi -g -O2 -Werror -Wall -fPIC -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64  -fPIC -fvisibility=hidden -DSHARED  -c btf_dump.c -o sharedobjs/btf_dump.o
+cc -I. -I../include -I../include/uapi -g -O2 -Werror -Wall -fPIC -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64  -fPIC -fvisibility=hidden -DSHARED  -c hashmap.c -o sharedobjs/hashmap.o
+cc -I. -I../include -I../include/uapi -g -O2 -Werror -Wall -fPIC -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64  -fPIC -fvisibility=hidden -DSHARED  -c ringbuf.c -o sharedobjs/ringbuf.o
+cc -I. -I../include -I../include/uapi -g -O2 -Werror -Wall -fPIC -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64  -fPIC -fvisibility=hidden -DSHARED  -c strset.c -o sharedobjs/strset.o
+cc -I. -I../include -I../include/uapi -g -O2 -Werror -Wall -fPIC -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64  -fPIC -fvisibility=hidden -DSHARED  -c linker.c -o sharedobjs/linker.o
+cc -I. -I../include -I../include/uapi -g -O2 -Werror -Wall -fPIC -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64  -fPIC -fvisibility=hidden -DSHARED  -c gen_loader.c -o sharedobjs/gen_loader.o
+cc -I. -I../include -I../include/uapi -g -O2 -Werror -Wall -fPIC -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64  -fPIC -fvisibility=hidden -DSHARED  -c relo_core.c -o sharedobjs/relo_core.o
+cc -I. -I../include -I../include/uapi -g -O2 -Werror -Wall -fPIC -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64  -fPIC -fvisibility=hidden -DSHARED  -c usdt.c -o sharedobjs/usdt.o
+cc -shared -Wl,--version-script=libbpf.map \
+          -Wl,-soname,libbpf.so.1 \
+          sharedobjs/bpf.o sharedobjs/btf.o sharedobjs/libbpf.o sharedobjs/libbpf_errno.o sharedobjs/netlink.o sharedobjs/nlattr.o sharedobjs/str_error.o sharedobjs/libbpf_probes.o sharedobjs/bpf_prog_linfo.o sharedobjs/btf_dump.o sharedobjs/hashmap.o sharedobjs/ringbuf.o sharedobjs/strset.o sharedobjs/linker.o sharedobjs/gen_loader.o sharedobjs/relo_core.o sharedobjs/usdt.o   -lelf -L/lib -lz  -o libbpf.so.1.0.0
+ln -sf libbpf.so.1.0.0 libbpf.so.1
+ln -sf libbpf.so.1 libbpf.so
+sed -e "s|@PREFIX@|/usr|" \
+        -e "s|@LIBDIR@|$\{prefix\}/lib64|" \
+        -e "s|@VERSION@|1.0.0|" \
+        < libbpf.pc.template > libbpf.pc
+make[1]: Leaving directory '/root/xdp-tools/lib/libbpf/src'
+make -C libbpf/src install_headers DESTDIR=root 
+make[1]: Entering directory '/root/xdp-tools/lib/libbpf/src'
+if [ ! -d 'root/usr/include/bpf' ]; then install -d -m 755 'root/usr/include/bpf'; fi;
+install -m 644 bpf.h libbpf.h btf.h libbpf_common.h libbpf_legacy.h bpf_helpers.h bpf_helper_defs.h bpf_tracing.h bpf_endian.h bpf_core_read.h skel_internal.h libbpf_version.h usdt.bpf.h 'root/usr/include/bpf'
+make[1]: Leaving directory '/root/xdp-tools/lib/libbpf/src'
+
+  libxdp
+make[1]: Entering directory '/root/xdp-tools/lib/libxdp'
+mkdir -p ./staticobjs
+gcc -O2 -g -I../libbpf/src/root/usr/include -DHAVE_ZLIB -DHAVE_ELF -I../libbpf/include/uapi -std=gnu11 -Wextra -Werror -DBPF_DIR_MNT=\"/sys/fs/bpf\" -DBPF_OBJECT_PATH=\"/usr/local/lib/bpf\" -DMAX_DISPATCHER_ACTIONS=10 -DTOOLS_VERSION=\""1.3.0"\" -DLIBBPF_VERSION=\"1.0.0\" -DRUNDIR=\"/run\" -DHAVE_LIBBPF_PERF_BUFFER__CONSUME -DHAVE_LIBBPF_BTF__LOAD_FROM_KERNEL_BY_ID -DHAVE_LIBBPF_BTF__TYPE_CNT -DHAVE_LIBBPF_BPF_OBJECT__NEXT_MAP -DHAVE_LIBBPF_BPF_OBJECT__NEXT_PROGRAM -DHAVE_LIBBPF_BPF_PROGRAM__INSN_CNT -DHAVE_LIBBPF_BPF_MAP_CREATE -DHAVE_LIBBPF_PERF_BUFFER__NEW_RAW -DHAVE_LIBBPF_BPF_XDP_ATTACH -DHAVE_LIBBPF_BPF_MAP__SET_AUTOCREATE -DHAVE_LIBBPF_BPF_PROG_TEST_RUN_OPTS -DHAVE_SECURE_GETENV -DDEBUG -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 -I../../headers  -D LIBXDP_STATIC=1 -Wall -I../../headers -c libxdp.c -o staticobjs/libxdp.o
+libxdp.c:26:10: fatal error: linux/err.h: No such file or directory
+   26 | #include <linux/err.h> /* ERR_PTR */
+      |          ^~~~~~~~~~~~~
+compilation terminated.
+make[1]: *** [Makefile:89: staticobjs/libxdp.o] Error 1
+make[1]: Leaving directory '/root/xdp-tools/lib/libxdp'
+make: *** [Makefile:20: libxdp] Error 2
