@@ -7,6 +7,7 @@
 #include <getopt.h>
 #include <fcntl.h>
 #include <arpa/inet.h>
+#include <linux/if.h>
 
 #include <bpf/libbpf.h>
 #include <xdp/libxdp.h>
@@ -23,6 +24,14 @@ static int strrev(char *src, int len)
         src[i] = tmp[len - 1 - i];
     }
     return 0;
+}
+
+static int double_rlimit(void)
+{
+	pr_debug("Permission denied when loading eBPF object; "
+		 "raising rlimit and retrying\n");
+
+	return set_rlimit(0);
 }
 
 struct filter__program_with_map *filter__open_program_with_map(const char *filename, enum filter_type type, const char *prog_name, const char *map_name)
@@ -167,15 +176,18 @@ int filter__set_map(struct filter__program_with_map *f, const char *map_filename
 }
 
 static struct option long_options[] = {
-    {"qn",      optional_argument,      NULL, 'q'},
-    {"qfile",   required_argument,      NULL, 'Q'},
-    {"ur",      optional_argument,      NULL, 'u'},
-    {"ufile",   required_argument,      NULL, 'U'},
-    {"hc",      optional_argument,      NULL, 'h'},
-    {"hfile",   required_argument,      NULL, 'H'},
-    {NULL,      0,                      NULL, 0}
+    {"qn",      optional_argument,  NULL, 'q'},
+    {"qfile",   required_argument,  NULL, 'Q'},
+    {"ur",      optional_argument,  NULL, 'u'},
+    {"ufile",   required_argument,  NULL, 'U'},
+    {"hc",      optional_argument,  NULL, 'h'},
+    {"hfile",   required_argument,  NULL, 'H'},
+    {"mode",    required_argument,  NULL, 'm'},
+    {"iface",   required_argument,  NULL, 'i'},
+    {NULL,      0,                  NULL, 0}
 };
 
+unsigned int filters_prio[3] = {100, 50, 150};
 int filters_set[3] = {0};
 #define SET_QN() filters_set[0] = 1
 #define SET_UR() filters_set[1] = 1
@@ -216,6 +228,8 @@ char filters_mapfiles[3][256] = {
 int main(int argc, char** argv)
 {
     int opt, option_index=0;
+    enum xdp_attach_mode mode;
+    int ifindex;
     
     while((opt = getopt_long(argc, argv, NULL, long_options, &option_index)) != -1)
     {
@@ -265,8 +279,73 @@ int main(int argc, char** argv)
             }
             SET_HC_FILE(optarg);
             break;
+
+            case 'm':
+            if(optarg[0] == 'n')
+                mode = XDP_MODE_NATIVE;
+            else if(optarg[0] == 's')
+                mode = XDP_MODE_SKB;
+            else{
+                printf("attach mode not supported\n");
+                return -1;
+            }
+            break;
+
+            case 'i':
+            ifindex = if_nametoindex(optarg);
+            if(!ifindex){
+                printf("cannot find iface named %s\n", optarg);
+                return -1;
+            }
+            break;
         }
     }
 
+retry:
+    int err;
+    char errmsg[1024];
+    int i = FILTER_QN;
+    struct xdp_program* progs[3] = {NULL};
+    int cnt = 0;
+    struct filter__program_with_map* pwm;
+    for(;i<=FILTER_HC; ++i)
+    {
+        if(filters_set[i] == 1)
+        {
+            pwm = filter__open_program_with_map(filters_progfiles[i], (enum filter_type)i, "xdp", "main_map");
+            
+            if(progs[cnt])
+                xdp_program__close(progs[cnt]);
+            
+            progs[cnt] = pwm->program;
+            xdp_program__set_run_prio(progs[cnt], filters_prio[i]);
+            cnt++;
+            filter__set_map(pwm, filters_mapfiles[i]);
+        }
+    }
 
+    err = xdp_program__attach_multi(progs, cnt, ifindex, mode, 0);
+    if (err) {
+		if (err == -EPERM && !double_rlimit())
+			goto retry;
+
+		if (err == -EOPNOTSUPP &&
+		    (mode == XDP_MODE_NATIVE || mode == XDP_MODE_HW)) {
+			printf("Attaching XDP program in %s mode not supported - try %s mode.\n",
+				mode == XDP_MODE_NATIVE ? "native" : "HW",
+				mode == XDP_MODE_NATIVE ? "SKB" : "native or SKB");
+		} else {
+			libbpf_strerror(err, errmsg, sizeof(errmsg));
+			printf("Couldn't attach XDP program on iface %s(%d)\n",
+				errmsg, err);
+		}
+		goto out;
+	}
+
+out:
+	for (i = 0; i < cnt; i++)
+		if (progs[i])
+			xdp_program__close(progs[i]);
+	free(progs);
+	return err;
 }
