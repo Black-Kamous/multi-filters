@@ -8,10 +8,12 @@
 #include <fcntl.h>
 #include <arpa/inet.h>
 #include <linux/if.h>
+#include <net/if.h>
 
 #include <bpf/libbpf.h>
 #include <xdp/libxdp.h>
 #include <linux/err.h>
+#include <sys/resource.h>
 
 #include "myloader.h"
 
@@ -24,6 +26,47 @@ static int strrev(char *src, int len)
         src[i] = tmp[len - 1 - i];
     }
     return 0;
+}
+
+static int set_rlimit(unsigned int min_limit)
+{
+	struct rlimit limit;
+	int err = 0;
+
+	err = getrlimit(RLIMIT_MEMLOCK, &limit);
+	if (err) {
+		err = -errno;
+		pr_warn("Couldn't get current rlimit\n");
+		return err;
+	}
+
+	if (limit.rlim_cur == RLIM_INFINITY || limit.rlim_cur == 0) {
+		pr_debug("Current rlimit is infinity or 0. Not raising\n");
+		return -ENOMEM;
+	}
+
+	if (min_limit) {
+		if (limit.rlim_cur >= min_limit) {
+			pr_debug("Current rlimit %ju already >= minimum %u\n",
+				 (uintmax_t)limit.rlim_cur, min_limit);
+			return 0;
+		}
+		pr_debug("Setting rlimit to minimum %u\n", min_limit);
+		limit.rlim_cur = min_limit;
+	} else {
+		pr_debug("Doubling current rlimit of %ju\n", (uintmax_t)limit.rlim_cur);
+		limit.rlim_cur <<= 1;
+	}
+	limit.rlim_max = max(limit.rlim_cur, limit.rlim_max);
+
+	err = setrlimit(RLIMIT_MEMLOCK, &limit);
+	if (err) {
+		err = -errno;
+		pr_warn("Couldn't raise rlimit: %s\n", strerror(-err));
+		return err;
+	}
+
+	return 0;
 }
 
 static int double_rlimit(void)
@@ -46,12 +89,12 @@ struct filter__program_with_map *filter__open_program_with_map(const char *filen
 
     obj = bpf_object__open(filename);
     if (IS_ERR(obj))
-        return libxdp_err_ptr(PTR_ERR(obj), true);
+        return (void*)obj;
     xopts.obj = obj;
 
     p = xdp_program__create(&xopts);
     if (!p)
-        return p;
+        return (void*)p;
     struct bpf_map *map;
     map = bpf_object__find_map_by_name(obj, map_name);
     map_fd = bpf_map__fd(map);
@@ -119,7 +162,7 @@ int filter__set_map(struct filter__program_with_map *f, const char *map_filename
             {
                 if (buf[i] == '/')
                 {
-                    preflen = atoi(buf[i + 1]);
+                    preflen = atoi(buf+i+1);
                     buf[i] = '\0';
                     break;
                 }
@@ -128,7 +171,7 @@ int filter__set_map(struct filter__program_with_map *f, const char *map_filename
             inet_pton(AF_INET, buf, &dst);
             ilk.prefixlen = preflen;
             ilk.data = htonl(dst);
-            bpf_map_update_elem(f->map_fd, &ilk, cnt, BPF_ANY);
+            bpf_map_update_elem(f->map_fd, &ilk, &cnt, BPF_ANY);
             memset(buf, 0, PREF_MAXLEN);
             cnt++;
         }
@@ -156,7 +199,7 @@ int filter__set_map(struct filter__program_with_map *f, const char *map_filename
             {
                 if (buf[i] == ' ')
                 {
-                    ttl = atoi(buf[i + 1]);
+                    ttl = atoi(buf+i+1);
                     buf[i] = '\0';
                     bpf_map_update_elem(inner_map_fd, &map_cnt, &ttl, BPF_NOEXIST);
                     map_cnt++;
@@ -184,6 +227,7 @@ static struct option long_options[] = {
     {"hfile",   required_argument,  NULL, 'H'},
     {"mode",    required_argument,  NULL, 'm'},
     {"iface",   required_argument,  NULL, 'i'},
+    {"help",    no_argument,        NULL, 'p'},
     {NULL,      0,                  NULL, 0}
 };
 
@@ -213,9 +257,9 @@ char filters_progfiles[3][256] = {
 #define GET_HC_FILE(fn) (filters_progfiles[2])
 
 char filters_mapfiles[3][256] = {
-    NULL,
-    NULL,
-    NULL
+    {0},
+    {0},
+    {0}
 };
 
 #define SET_QN_MAPFILE(fn) strncpy(filters_mapfiles[0],fn,256)
@@ -225,20 +269,48 @@ char filters_mapfiles[3][256] = {
 #define GET_UR_MAPFILE(fn) (filters_mapfiles[1])
 #define GET_HC_MAPFILE(fn) (filters_mapfiles[2])
 
+void print_help()
+{
+    printf("- multiple filter loader -\n");
+    printf("this program loads xdp filter(s) that user\n"
+            "chooses into kernel\n\n");
+    printf("three filters are to be chosen\n");
+    printf("* qname filter:         --qn --qfile\n");
+    printf("* source IP filter:     --ur --ufile\n");
+    printf("* hop count filter:     --hc --hfile\n");
+    printf("if the former option above is set,\n"
+            "then the according filter is activated\n");
+    printf("note that this options should be\n"
+            "followed with a path to a xdp kernel\n"
+            "program file\n\n");
+    printf("the latter option sets the map data file\n"
+            "that the according filter needs\n\n");
+    printf("e.g.\n");
+    printf("myloader --qn myfilter.o --qfile myqlist.txt\n");
+}
+
 int main(int argc, char** argv)
 {
     int opt, option_index=0;
-    enum xdp_attach_mode mode;
-    int ifindex;
-    
-    while((opt = getopt_long(argc, argv, NULL, long_options, &option_index)) != -1)
+    enum xdp_attach_mode mode = XDP_MODE_SKB;
+    int ifindex = -1;
+    if(argc < 2)
+    {
+        print_help();
+        return 0;
+    }
+
+    int filternum = 0;
+
+    while((opt = getopt_long(argc, argv, ":", long_options, &option_index)) != -1)
     {
         switch(opt)
         {
             case 'q':
             SET_QN();
-            if(!optarg)
+            if(optarg)
                 SET_QN_FILE(optarg);
+            filternum++;
             break;
 
             case 'Q':
@@ -252,8 +324,9 @@ int main(int argc, char** argv)
 
             case 'u':
             SET_UR();
-            if(!optarg)
+            if(optarg)
                 SET_UR_FILE(optarg);
+            filternum++;
             break;
 
             case 'U':
@@ -267,8 +340,9 @@ int main(int argc, char** argv)
 
             case 'h':
             SET_HC();
-            if(!optarg)
+            if(optarg)
                 SET_HC_FILE(optarg);
+            filternum++;
             break;
 
             case 'H':
@@ -298,7 +372,23 @@ int main(int argc, char** argv)
                 return -1;
             }
             break;
+
+            case 'p':
+            print_help();
+            return 0;
+
+            case ':':
+            printf(ERROR_THEME("missing argument\n"));
+            print_help();
+            return 0;
         }
+    }
+
+    if(filternum == 0)
+    {
+        printf("no filter set\n");
+        print_help();
+        return 0;
     }
 
 retry:
@@ -346,6 +436,5 @@ out:
 	for (i = 0; i < cnt; i++)
 		if (progs[i])
 			xdp_program__close(progs[i]);
-	free(progs);
 	return err;
 }

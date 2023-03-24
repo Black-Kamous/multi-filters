@@ -5,6 +5,20 @@
 #define SUF_MAXLEN 64
 #define PREF_MAXLEN 32
 
+#define __pr(fmt, ...)                             \
+	do {                                              \
+		printf(fmt, ##__VA_ARGS__); \
+	} while (0)
+
+#define pr_warn(fmt, ...) __pr(fmt, ##__VA_ARGS__)
+#define pr_info(fmt, ...) __pr(fmt, ##__VA_ARGS__)
+#define pr_debug(fmt, ...) __pr(fmt, ##__VA_ARGS__)
+
+#define ERROR_THEME(c) "\033[1;31m"c"\033[0m"
+
+#define min(x, y) ((x) < (y) ? x : y)
+#define max(x, y) ((x) > (y) ? x : y)
+
 struct ipv4_lpm_key {
         __u32 prefixlen;
         __u32 data;
