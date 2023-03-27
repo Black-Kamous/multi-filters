@@ -7,3 +7,9 @@ myloader: myloader.c myloader.h
 	-DHAVE_LIBBPF_BPF_PROG_TEST_RUN_OPTS -DHAVE_SECURE_GETENV -DDEBUG -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 \
 	-I./lib/../headers   -L./lib/libbpf/src -L./lib/libxdp \
 	-o myloader myloader.c  -l:libxdp.a  -lm -l:libbpf.a -L/lib -lz -lelf
+
+unload: 
+	ip link set dev eth0 xdpgeneric off
+
+show: 
+	ip link show dev eth0

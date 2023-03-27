@@ -35,6 +35,8 @@ enum filter_type {
     FILTER_HC
 };
 
+#define FILTER_MAX FILTER_HC
+
 struct filter__program_with_map
 {
     enum filter_type type;
@@ -43,6 +45,6 @@ struct filter__program_with_map
     enum bpf_map_type map_type;
 };
 
-struct filter__program_with_map* filter__open_program_with_map(const char* filename, enum filter_type type, const char* prog_name, const char* map_name);
+struct filter__program_with_map* filter__open_program_with_map(const char* filename, enum filter_type type, const char* prog_name);
 
 int filter__set_map(struct filter__program_with_map* f, const char* map_filename);

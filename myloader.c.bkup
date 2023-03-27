@@ -77,12 +77,12 @@ static int double_rlimit(void)
 	return set_rlimit(0);
 }
 
-struct filter__program_with_map *filter__open_program_with_map(const char *filename, enum filter_type type, const char *prog_name)
+struct filter__program_with_map *filter__open_program_with_map(const char *filename, enum filter_type type, const char *prog_name, const char *map_name)
 {
     struct bpf_object *obj = NULL;
     struct xdp_program *p;
-    int map_fd = -1;
-    enum bpf_map_type map_type = -1;
+    int map_fd;
+    enum bpf_map_type map_type;
     struct filter__program_with_map *pwm = malloc(sizeof(struct filter__program_with_map));
 
     DECLARE_LIBXDP_OPTS(xdp_program_opts, xopts, .prog_name = prog_name);
@@ -96,7 +96,15 @@ struct filter__program_with_map *filter__open_program_with_map(const char *filen
     printf("xdp create:%lx\n", (unsigned long)p);
     if (!p)
         return (void*)p;
-    
+    struct bpf_map *map;
+    map = bpf_object__find_map_by_name(obj, map_name);
+    map_fd = bpf_map__fd(map);
+    map_type = bpf_map__type(map);
+
+    printf("map name:%s, map ptr:%lx, map fd:%d\n", map_name, (unsigned long)map, map_fd);
+    if (map_fd == -1)
+        return NULL;
+
     pwm->type = type;
     pwm->program = p;
     pwm->map_fd = map_fd;
@@ -279,11 +287,8 @@ void print_help()
             "program file\n\n");
     printf("the latter option sets the map data file\n"
             "that the according filter needs\n\n");
-    printf("--iface set the iface user trys to load on\n");
-    printf("--mode sets the mode of xdp attach, e.g.\n"
-            "n for native mode, s for skb mode(default)\n");
     printf("e.g.\n");
-    printf("./myloader --iface=eth0 --mode=n --qn=myfilter.o --qfile=myqlist.txt\n");
+    printf("./myloader --qn myfilter.o --qfile myqlist.txt\n");
 }
 
 int main(int argc, char** argv)
@@ -353,8 +358,6 @@ int main(int argc, char** argv)
             break;
 
             case 'm':
-            if(!optarg)
-                break;
             if(optarg[0] == 'n')
                 mode = XDP_MODE_NATIVE;
             else if(optarg[0] == 's')
@@ -397,21 +400,24 @@ retry:
     char errmsg[1024];
     int i = FILTER_QN;
     struct xdp_program* progs[3] = {0,0,0};
-    struct filter__program_with_map* pwms[3] = {0,0,0};
     int cnt = 0;
     struct filter__program_with_map* pwm;
-    for(;i<=FILTER_MAX; ++i)
+    for(;i<=FILTER_HC; ++i)
     {
+        printf("0\n");
         if(filters_set[i] == 1)
         {
-            pwm = filter__open_program_with_map(filters_progfiles[i], (enum filter_type)i, "xdp_patch_ports_func");
+            printf("1\n");
+            pwm = filter__open_program_with_map(filters_progfiles[i], (enum filter_type)i, "xdp_patch_ports_func", "main_map");
             
             if(progs[cnt])
                 xdp_program__close(progs[cnt]);
+            printf("2: cnt=%d, sizeofprog=%ld, pwm=%lx\n", cnt, sizeof(progs), (unsigned long)pwm);
             progs[cnt] = pwm->program;
             xdp_program__set_run_prio(progs[cnt], filters_prio[i]);
             cnt++;
-            pwms[i] = pwm;
+            printf("3\n");
+            filter__set_map(pwm, filters_mapfiles[i]);
         }
     }
 
@@ -434,35 +440,6 @@ retry:
 		goto out;
 	}
 
-
-    struct bpf_map *map;
-    struct bpf_object *tmpobj = NULL;
-    int map_fd = -1;
-    enum bpf_map_type map_type = -1;
-    char *map_name = "main_map";
-    for(i=FILTER_QN;i<=FILTER_MAX;++i)
-    {
-        if(progs[i]){
-            tmpobj = xdp_program__bpf_obj(progs[i]);
-            map = bpf_object__find_map_by_name(tmpobj, map_name);
-            map_fd = bpf_map__fd(map);
-            map_type = bpf_map__type(map);
-
-            printf("map name:%s, map ptr:%lx, map fd:%d\n", map_name, (unsigned long)map, map_fd);
-            if (map_fd == -1)
-            {
-                printf("map %s not found in filter %d\n", map_name, i);
-                print_help();
-                return -1;
-            }
-
-            pwms[i]->map_fd = map_fd;
-            pwms[i]->map_type = map_type;
-            filter__set_map(pwms[i], filters_mapfiles[i]);
-        }
-    }
-
-    return 0;
 out:
 	for (i = 0; i < cnt; i++)
 		if (progs[i])
