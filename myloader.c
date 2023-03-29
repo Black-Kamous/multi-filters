@@ -176,27 +176,29 @@ int filter__set_map(struct filter__program_with_map *f, const char *map_filename
             return -1;
         int ttl = 0;
 
-        int inner_map_fd = bpf_map_create(
-            BPF_MAP_TYPE_ARRAY, "inner_map",
-            sizeof(__u32), sizeof(__u32), 8, NULL
-        );
-
-        if(inner_map_fd < 0)
-            return -1;
-
-        int map_cnt = 0;
-        while (fgets(buf, PREF_MAXLEN, fp) != NULL)
+        __u8 mval = 1;
+        printf("1\n");
+        while (fgets(buf, PREF_MAXLEN+30, fp) != NULL)
         {
+            int inner_map_fd = bpf_map_create(
+                BPF_MAP_TYPE_HASH, "inner_map",
+                sizeof(__u32), sizeof(__u32), 8, NULL
+            );
+
+            if(inner_map_fd < 0)
+                return -1;
             len = strlen(buf);
-            buf[len - 1] = '\0'; /*去掉换行符*/
+            buf[len] = '\0'; /*去掉换行符*/
+            printf("orgin %s\n", buf);
             for (int i = len - 2; i >= 0; --i)
             {
                 if (buf[i] == ' ')
                 {
+                    printf("bindex %d\n", i);
                     ttl = atoi(buf+i+1);
+                    printf("ttl val %d\n", (int)ttl);
                     buf[i] = '\0';
-                    bpf_map_update_elem(inner_map_fd, &map_cnt, &ttl, BPF_NOEXIST);
-                    map_cnt++;
+                    bpf_map_update_elem(inner_map_fd, &ttl, &mval, BPF_NOEXIST);
                 }
             }
             __u32 dst;
@@ -440,10 +442,11 @@ retry:
     int map_fd = -1;
     enum bpf_map_type map_type = -1;
     char *map_name = "main_map";
+    cnt = 0;
     for(i=FILTER_QN;i<=FILTER_MAX;++i)
     {
-        if(progs[i]){
-            tmpobj = xdp_program__bpf_obj(progs[i]);
+        if(pwms[i]){
+            tmpobj = xdp_program__bpf_obj(progs[cnt]);
             map = bpf_object__find_map_by_name(tmpobj, map_name);
             map_fd = bpf_map__fd(map);
             map_type = bpf_map__type(map);
@@ -459,6 +462,7 @@ retry:
             pwms[i]->map_fd = map_fd;
             pwms[i]->map_type = map_type;
             filter__set_map(pwms[i], filters_mapfiles[i]);
+            cnt++;
         }
     }
 
