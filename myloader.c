@@ -143,29 +143,19 @@ int filter__set_map(struct filter__program_with_map *f, const char *map_filename
         break;
 
     case FILTER_UR:
-        if (f->map_type != BPF_MAP_TYPE_LPM_TRIE)
+        if (f->map_type != BPF_MAP_TYPE_HASH)
             return -1;
-        struct ipv4_lpm_key ilk;
+        __u32 hval = 1;
         while (fgets(buf, PREF_MAXLEN, fp) != NULL)
         {
             len = strlen(buf);
-            buf[len - 1] = '\0'; /*去掉换行符*/
-
-            __u32 preflen = 32;
-            for (int i = len - 2; i >= 0; --i)
-            {
-                if (buf[i] == '/')
-                {
-                    preflen = atoi(buf+i+1);
-                    buf[i] = '\0';
-                    break;
-                }
-            }
+            if(len <= 0)
+                break;
+            buf[len] = '\0'; /*去掉换行符*/
+            
             __u32 dst;
             inet_pton(AF_INET, buf, &dst);
-            ilk.prefixlen = preflen;
-            ilk.data = htonl(dst);
-            bpf_map_update_elem(f->map_fd, &ilk, &cnt, BPF_ANY);
+            bpf_map_update_elem(f->map_fd, &dst, &hval, BPF_ANY);
             memset(buf, 0, PREF_MAXLEN);
             cnt++;
         }
@@ -177,7 +167,6 @@ int filter__set_map(struct filter__program_with_map *f, const char *map_filename
         int ttl = 0;
 
         __u8 mval = 1;
-        printf("1\n");
         while (fgets(buf, PREF_MAXLEN+30, fp) != NULL)
         {
             int inner_map_fd = bpf_map_create(
@@ -190,7 +179,7 @@ int filter__set_map(struct filter__program_with_map *f, const char *map_filename
             len = strlen(buf);
             buf[len] = '\0'; /*去掉换行符*/
             printf("orgin %s\n", buf);
-            for (int i = len - 2; i >= 0; --i)
+            for (int i = len - 1; i >= 0; --i)
             {
                 if (buf[i] == ' ')
                 {
@@ -203,7 +192,6 @@ int filter__set_map(struct filter__program_with_map *f, const char *map_filename
             }
             __u32 dst;
             inet_pton(AF_INET, buf, &dst);
-            dst = htonl(dst);
             bpf_map_update_elem(f->map_fd, &dst, &inner_map_fd, BPF_ANY);
             close(inner_map_fd);
             memset(buf, 0, PREF_MAXLEN);
@@ -212,6 +200,39 @@ int filter__set_map(struct filter__program_with_map *f, const char *map_filename
         break;
     }
     return 0;
+}
+
+// static void recollect_bpf_maps(char **map_names)
+// {
+    
+// }
+
+static void unload_all(int ifindex)
+{
+	struct xdp_multiprog *mp = NULL;
+	int err = EXIT_FAILURE;
+
+	if (ifindex<0) {
+		pr_warn("Must specify ifname\n");
+		goto out;
+	}
+
+	mp = xdp_multiprog__get_from_ifindex(ifindex);
+	if (IS_ERR_OR_NULL(mp)) {
+		pr_warn("No XDP program loaded on %d\n", ifindex);
+		mp = NULL;
+		goto out;
+	}
+
+    err = xdp_multiprog__detach(mp);
+    if (err) {
+        pr_warn("Unable to detach XDP program: %s\n",
+            strerror(-err));
+        goto out;
+    }
+
+out:
+	xdp_multiprog__close(mp);
 }
 
 static struct option long_options[] = {
@@ -224,6 +245,8 @@ static struct option long_options[] = {
     {"mode",    required_argument,  NULL, 'm'},
     {"iface",   required_argument,  NULL, 'i'},
     {"help",    no_argument,        NULL, 'p'},
+    {"recollect-map", no_argument,  NULL, 'r'},
+    {"unload-all",    no_argument,  NULL, 'l'},
     {NULL,      0,                  NULL, 0}
 };
 
@@ -265,9 +288,10 @@ char filters_mapfiles[3][256] = {
 #define GET_UR_MAPFILE(fn) (filters_mapfiles[1])
 #define GET_HC_MAPFILE(fn) (filters_mapfiles[2])
 
-void print_help()
+static void print_help()
 {
-    printf("- multiple filter loader -\n");
+    printf(ERROR_THEME("- multiple filter loader -\n"));
+    printf("\033[32m");
     printf("this program loads xdp filter(s) that user\n"
             "chooses into kernel\n\n");
     printf("three filters are to be chosen\n");
@@ -283,9 +307,11 @@ void print_help()
             "that the according filter needs\n\n");
     printf("--iface set the iface user trys to load on\n");
     printf("--mode sets the mode of xdp attach, e.g.\n"
-            "n for native mode, s for skb mode(default)\n");
+            "n for native mode, s for skb mode(default)\n\n");
     printf("e.g.\n");
     printf("./myloader --iface=eth0 --mode=n --qn=myfilter.o --qfile=myqlist.txt\n");
+    printf("./myloader --iface=eth0 --unload-all\n");
+    printf("\033[0m");
 }
 
 int main(int argc, char** argv)
@@ -379,6 +405,10 @@ int main(int argc, char** argv)
             print_help();
             return 0;
 
+            case 'l':
+            unload_all(ifindex);
+            return 0;
+
             case ':':
             printf(ERROR_THEME("missing argument\n"));
             print_help();
@@ -446,6 +476,7 @@ retry:
     for(i=FILTER_QN;i<=FILTER_MAX;++i)
     {
         if(pwms[i]){
+            printf("finding map\n");
             tmpobj = xdp_program__bpf_obj(progs[cnt]);
             map = bpf_object__find_map_by_name(tmpobj, map_name);
             map_fd = bpf_map__fd(map);
@@ -471,5 +502,10 @@ out:
 	for (i = 0; i < cnt; i++)
 		if (progs[i])
 			xdp_program__close(progs[i]);
+
+    for(i=FILTER_QN;i<=FILTER_MAX;++i){
+        if(pwms[i])
+            free(pwms[i]);
+    }
 	return err;
 }
