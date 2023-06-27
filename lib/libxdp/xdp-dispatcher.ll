@@ -12,7 +12,7 @@ target triple = "bpf"
 @llvm.compiler.used = appending global [4 x i8*] [i8* getelementptr inbounds ([4 x i8], [4 x i8]* @_license, i32 0, i32 0), i8* bitcast ([2 x i32]** @dispatcher_version to i8*), i8* bitcast (i32 (%struct.xdp_md*)* @xdp_dispatcher to i8*), i8* bitcast (i32 (%struct.xdp_md*)* @xdp_pass to i8*)], section "llvm.metadata"
 
 ; Function Attrs: nofree noinline nounwind
-define dso_local i32 @prog0(%struct.xdp_md* readnone %0) local_unnamed_addr #0 !dbg !52 {
+define dso_local i32 @prog0(%struct.xdp_md* noundef readnone %0) local_unnamed_addr #0 !dbg !52 {
   %2 = alloca i32, align 4
   call void @llvm.dbg.value(metadata %struct.xdp_md* %0, metadata !65, metadata !DIExpression()), !dbg !68
   %3 = bitcast i32* %2 to i8*, !dbg !69
@@ -42,7 +42,7 @@ declare void @llvm.lifetime.start.p0i8(i64 immarg, i8* nocapture) #2
 declare void @llvm.lifetime.end.p0i8(i64 immarg, i8* nocapture) #2
 
 ; Function Attrs: nofree noinline nounwind
-define dso_local i32 @prog1(%struct.xdp_md* readnone %0) local_unnamed_addr #0 !dbg !81 {
+define dso_local i32 @prog1(%struct.xdp_md* noundef readnone %0) local_unnamed_addr #0 !dbg !81 {
   %2 = alloca i32, align 4
   call void @llvm.dbg.value(metadata %struct.xdp_md* %0, metadata !83, metadata !DIExpression()), !dbg !85
   %3 = bitcast i32* %2 to i8*, !dbg !86
@@ -63,7 +63,7 @@ define dso_local i32 @prog1(%struct.xdp_md* readnone %0) local_unnamed_addr #0 !
 }
 
 ; Function Attrs: nofree noinline nounwind
-define dso_local i32 @prog2(%struct.xdp_md* readnone %0) local_unnamed_addr #0 !dbg !94 {
+define dso_local i32 @prog2(%struct.xdp_md* noundef readnone %0) local_unnamed_addr #0 !dbg !94 {
   %2 = alloca i32, align 4
   call void @llvm.dbg.value(metadata %struct.xdp_md* %0, metadata !96, metadata !DIExpression()), !dbg !98
   %3 = bitcast i32* %2 to i8*, !dbg !99
@@ -84,7 +84,7 @@ define dso_local i32 @prog2(%struct.xdp_md* readnone %0) local_unnamed_addr #0 !
 }
 
 ; Function Attrs: nofree noinline nounwind
-define dso_local i32 @prog3(%struct.xdp_md* readnone %0) local_unnamed_addr #0 !dbg !107 {
+define dso_local i32 @prog3(%struct.xdp_md* noundef readnone %0) local_unnamed_addr #0 !dbg !107 {
   %2 = alloca i32, align 4
   call void @llvm.dbg.value(metadata %struct.xdp_md* %0, metadata !109, metadata !DIExpression()), !dbg !111
   %3 = bitcast i32* %2 to i8*, !dbg !112
@@ -105,7 +105,7 @@ define dso_local i32 @prog3(%struct.xdp_md* readnone %0) local_unnamed_addr #0 !
 }
 
 ; Function Attrs: nofree noinline nounwind
-define dso_local i32 @prog4(%struct.xdp_md* readnone %0) local_unnamed_addr #0 !dbg !120 {
+define dso_local i32 @prog4(%struct.xdp_md* noundef readnone %0) local_unnamed_addr #0 !dbg !120 {
   %2 = alloca i32, align 4
   call void @llvm.dbg.value(metadata %struct.xdp_md* %0, metadata !122, metadata !DIExpression()), !dbg !124
   %3 = bitcast i32* %2 to i8*, !dbg !125
@@ -126,7 +126,7 @@ define dso_local i32 @prog4(%struct.xdp_md* readnone %0) local_unnamed_addr #0 !
 }
 
 ; Function Attrs: nofree noinline nounwind
-define dso_local i32 @prog5(%struct.xdp_md* readnone %0) local_unnamed_addr #0 !dbg !133 {
+define dso_local i32 @prog5(%struct.xdp_md* noundef readnone %0) local_unnamed_addr #0 !dbg !133 {
   %2 = alloca i32, align 4
   call void @llvm.dbg.value(metadata %struct.xdp_md* %0, metadata !135, metadata !DIExpression()), !dbg !137
   %3 = bitcast i32* %2 to i8*, !dbg !138
@@ -147,7 +147,7 @@ define dso_local i32 @prog5(%struct.xdp_md* readnone %0) local_unnamed_addr #0 !
 }
 
 ; Function Attrs: nofree noinline nounwind
-define dso_local i32 @prog6(%struct.xdp_md* readnone %0) local_unnamed_addr #0 !dbg !146 {
+define dso_local i32 @prog6(%struct.xdp_md* noundef readnone %0) local_unnamed_addr #0 !dbg !146 {
   %2 = alloca i32, align 4
   call void @llvm.dbg.value(metadata %struct.xdp_md* %0, metadata !148, metadata !DIExpression()), !dbg !150
   %3 = bitcast i32* %2 to i8*, !dbg !151
@@ -168,7 +168,7 @@ define dso_local i32 @prog6(%struct.xdp_md* readnone %0) local_unnamed_addr #0 !
 }
 
 ; Function Attrs: nofree noinline nounwind
-define dso_local i32 @prog7(%struct.xdp_md* readnone %0) local_unnamed_addr #0 !dbg !159 {
+define dso_local i32 @prog7(%struct.xdp_md* noundef readnone %0) local_unnamed_addr #0 !dbg !159 {
   %2 = alloca i32, align 4
   call void @llvm.dbg.value(metadata %struct.xdp_md* %0, metadata !161, metadata !DIExpression()), !dbg !163
   %3 = bitcast i32* %2 to i8*, !dbg !164
@@ -189,7 +189,7 @@ define dso_local i32 @prog7(%struct.xdp_md* readnone %0) local_unnamed_addr #0 !
 }
 
 ; Function Attrs: nofree noinline nounwind
-define dso_local i32 @prog8(%struct.xdp_md* readnone %0) local_unnamed_addr #0 !dbg !172 {
+define dso_local i32 @prog8(%struct.xdp_md* noundef readnone %0) local_unnamed_addr #0 !dbg !172 {
   %2 = alloca i32, align 4
   call void @llvm.dbg.value(metadata %struct.xdp_md* %0, metadata !174, metadata !DIExpression()), !dbg !176
   %3 = bitcast i32* %2 to i8*, !dbg !177
@@ -210,7 +210,7 @@ define dso_local i32 @prog8(%struct.xdp_md* readnone %0) local_unnamed_addr #0 !
 }
 
 ; Function Attrs: nofree noinline nounwind
-define dso_local i32 @prog9(%struct.xdp_md* readnone %0) local_unnamed_addr #0 !dbg !185 {
+define dso_local i32 @prog9(%struct.xdp_md* noundef readnone %0) local_unnamed_addr #0 !dbg !185 {
   %2 = alloca i32, align 4
   call void @llvm.dbg.value(metadata %struct.xdp_md* %0, metadata !187, metadata !DIExpression()), !dbg !189
   %3 = bitcast i32* %2 to i8*, !dbg !190
@@ -231,7 +231,7 @@ define dso_local i32 @prog9(%struct.xdp_md* readnone %0) local_unnamed_addr #0 !
 }
 
 ; Function Attrs: nofree noinline nounwind
-define dso_local i32 @compat_test(%struct.xdp_md* readnone %0) local_unnamed_addr #0 !dbg !198 {
+define dso_local i32 @compat_test(%struct.xdp_md* noundef readnone %0) local_unnamed_addr #0 !dbg !198 {
   %2 = alloca i32, align 4
   call void @llvm.dbg.value(metadata %struct.xdp_md* %0, metadata !200, metadata !DIExpression()), !dbg !202
   %3 = bitcast i32* %2 to i8*, !dbg !203
@@ -252,7 +252,7 @@ define dso_local i32 @compat_test(%struct.xdp_md* readnone %0) local_unnamed_add
 }
 
 ; Function Attrs: nofree nounwind
-define dso_local i32 @xdp_dispatcher(%struct.xdp_md* %0) #3 section "xdp" !dbg !211 {
+define dso_local i32 @xdp_dispatcher(%struct.xdp_md* noundef %0) #3 section "xdp" !dbg !211 {
   call void @llvm.dbg.value(metadata %struct.xdp_md* %0, metadata !213, metadata !DIExpression()), !dbg !217
   %2 = load volatile i8, i8* getelementptr inbounds (%struct.xdp_dispatcher_config, %struct.xdp_dispatcher_config* @conf, i64 0, i32 2), align 2, !dbg !218, !tbaa !219
   call void @llvm.dbg.value(metadata i8 %2, metadata !214, metadata !DIExpression()), !dbg !217
@@ -260,7 +260,7 @@ define dso_local i32 @xdp_dispatcher(%struct.xdp_md* %0) #3 section "xdp" !dbg !
   br i1 %3, label %86, label %4, !dbg !223
 
 4:                                                ; preds = %1
-  %5 = tail call i32 @prog0(%struct.xdp_md* %0), !dbg !224
+  %5 = tail call i32 @prog0(%struct.xdp_md* noundef %0), !dbg !224
   call void @llvm.dbg.value(metadata i32 %5, metadata !215, metadata !DIExpression()), !dbg !217
   %6 = shl nuw i32 1, %5, !dbg !225
   %7 = load volatile i32, i32* getelementptr inbounds (%struct.xdp_dispatcher_config, %struct.xdp_dispatcher_config* @conf, i64 0, i32 4, i64 0), align 4, !dbg !227, !tbaa !71
@@ -273,7 +273,7 @@ define dso_local i32 @xdp_dispatcher(%struct.xdp_md* %0) #3 section "xdp" !dbg !
   br i1 %11, label %86, label %12, !dbg !232
 
 12:                                               ; preds = %10
-  %13 = tail call i32 @prog1(%struct.xdp_md* %0), !dbg !233
+  %13 = tail call i32 @prog1(%struct.xdp_md* noundef %0), !dbg !233
   call void @llvm.dbg.value(metadata i32 %13, metadata !215, metadata !DIExpression()), !dbg !217
   %14 = shl nuw i32 1, %13, !dbg !234
   %15 = load volatile i32, i32* getelementptr inbounds (%struct.xdp_dispatcher_config, %struct.xdp_dispatcher_config* @conf, i64 0, i32 4, i64 1), align 4, !dbg !236, !tbaa !71
@@ -286,7 +286,7 @@ define dso_local i32 @xdp_dispatcher(%struct.xdp_md* %0) #3 section "xdp" !dbg !
   br i1 %19, label %86, label %20, !dbg !241
 
 20:                                               ; preds = %18
-  %21 = tail call i32 @prog2(%struct.xdp_md* %0), !dbg !242
+  %21 = tail call i32 @prog2(%struct.xdp_md* noundef %0), !dbg !242
   call void @llvm.dbg.value(metadata i32 %21, metadata !215, metadata !DIExpression()), !dbg !217
   %22 = shl nuw i32 1, %21, !dbg !243
   %23 = load volatile i32, i32* getelementptr inbounds (%struct.xdp_dispatcher_config, %struct.xdp_dispatcher_config* @conf, i64 0, i32 4, i64 2), align 4, !dbg !245, !tbaa !71
@@ -299,7 +299,7 @@ define dso_local i32 @xdp_dispatcher(%struct.xdp_md* %0) #3 section "xdp" !dbg !
   br i1 %27, label %86, label %28, !dbg !250
 
 28:                                               ; preds = %26
-  %29 = tail call i32 @prog3(%struct.xdp_md* %0), !dbg !251
+  %29 = tail call i32 @prog3(%struct.xdp_md* noundef %0), !dbg !251
   call void @llvm.dbg.value(metadata i32 %29, metadata !215, metadata !DIExpression()), !dbg !217
   %30 = shl nuw i32 1, %29, !dbg !252
   %31 = load volatile i32, i32* getelementptr inbounds (%struct.xdp_dispatcher_config, %struct.xdp_dispatcher_config* @conf, i64 0, i32 4, i64 3), align 4, !dbg !254, !tbaa !71
@@ -312,7 +312,7 @@ define dso_local i32 @xdp_dispatcher(%struct.xdp_md* %0) #3 section "xdp" !dbg !
   br i1 %35, label %86, label %36, !dbg !259
 
 36:                                               ; preds = %34
-  %37 = tail call i32 @prog4(%struct.xdp_md* %0), !dbg !260
+  %37 = tail call i32 @prog4(%struct.xdp_md* noundef %0), !dbg !260
   call void @llvm.dbg.value(metadata i32 %37, metadata !215, metadata !DIExpression()), !dbg !217
   %38 = shl nuw i32 1, %37, !dbg !261
   %39 = load volatile i32, i32* getelementptr inbounds (%struct.xdp_dispatcher_config, %struct.xdp_dispatcher_config* @conf, i64 0, i32 4, i64 4), align 4, !dbg !263, !tbaa !71
@@ -325,7 +325,7 @@ define dso_local i32 @xdp_dispatcher(%struct.xdp_md* %0) #3 section "xdp" !dbg !
   br i1 %43, label %86, label %44, !dbg !268
 
 44:                                               ; preds = %42
-  %45 = tail call i32 @prog5(%struct.xdp_md* %0), !dbg !269
+  %45 = tail call i32 @prog5(%struct.xdp_md* noundef %0), !dbg !269
   call void @llvm.dbg.value(metadata i32 %45, metadata !215, metadata !DIExpression()), !dbg !217
   %46 = shl nuw i32 1, %45, !dbg !270
   %47 = load volatile i32, i32* getelementptr inbounds (%struct.xdp_dispatcher_config, %struct.xdp_dispatcher_config* @conf, i64 0, i32 4, i64 5), align 4, !dbg !272, !tbaa !71
@@ -338,7 +338,7 @@ define dso_local i32 @xdp_dispatcher(%struct.xdp_md* %0) #3 section "xdp" !dbg !
   br i1 %51, label %86, label %52, !dbg !277
 
 52:                                               ; preds = %50
-  %53 = tail call i32 @prog6(%struct.xdp_md* %0), !dbg !278
+  %53 = tail call i32 @prog6(%struct.xdp_md* noundef %0), !dbg !278
   call void @llvm.dbg.value(metadata i32 %53, metadata !215, metadata !DIExpression()), !dbg !217
   %54 = shl nuw i32 1, %53, !dbg !279
   %55 = load volatile i32, i32* getelementptr inbounds (%struct.xdp_dispatcher_config, %struct.xdp_dispatcher_config* @conf, i64 0, i32 4, i64 6), align 4, !dbg !281, !tbaa !71
@@ -351,7 +351,7 @@ define dso_local i32 @xdp_dispatcher(%struct.xdp_md* %0) #3 section "xdp" !dbg !
   br i1 %59, label %86, label %60, !dbg !286
 
 60:                                               ; preds = %58
-  %61 = tail call i32 @prog7(%struct.xdp_md* %0), !dbg !287
+  %61 = tail call i32 @prog7(%struct.xdp_md* noundef %0), !dbg !287
   call void @llvm.dbg.value(metadata i32 %61, metadata !215, metadata !DIExpression()), !dbg !217
   %62 = shl nuw i32 1, %61, !dbg !288
   %63 = load volatile i32, i32* getelementptr inbounds (%struct.xdp_dispatcher_config, %struct.xdp_dispatcher_config* @conf, i64 0, i32 4, i64 7), align 4, !dbg !290, !tbaa !71
@@ -364,7 +364,7 @@ define dso_local i32 @xdp_dispatcher(%struct.xdp_md* %0) #3 section "xdp" !dbg !
   br i1 %67, label %86, label %68, !dbg !295
 
 68:                                               ; preds = %66
-  %69 = tail call i32 @prog8(%struct.xdp_md* %0), !dbg !296
+  %69 = tail call i32 @prog8(%struct.xdp_md* noundef %0), !dbg !296
   call void @llvm.dbg.value(metadata i32 %69, metadata !215, metadata !DIExpression()), !dbg !217
   %70 = shl nuw i32 1, %69, !dbg !297
   %71 = load volatile i32, i32* getelementptr inbounds (%struct.xdp_dispatcher_config, %struct.xdp_dispatcher_config* @conf, i64 0, i32 4, i64 8), align 4, !dbg !299, !tbaa !71
@@ -377,7 +377,7 @@ define dso_local i32 @xdp_dispatcher(%struct.xdp_md* %0) #3 section "xdp" !dbg !
   br i1 %75, label %86, label %76, !dbg !304
 
 76:                                               ; preds = %74
-  %77 = tail call i32 @prog9(%struct.xdp_md* %0), !dbg !305
+  %77 = tail call i32 @prog9(%struct.xdp_md* noundef %0), !dbg !305
   call void @llvm.dbg.value(metadata i32 %77, metadata !215, metadata !DIExpression()), !dbg !217
   %78 = shl nuw i32 1, %77, !dbg !306
   %79 = load volatile i32, i32* getelementptr inbounds (%struct.xdp_dispatcher_config, %struct.xdp_dispatcher_config* @conf, i64 0, i32 4, i64 9), align 4, !dbg !308, !tbaa !71
@@ -390,7 +390,7 @@ define dso_local i32 @xdp_dispatcher(%struct.xdp_md* %0) #3 section "xdp" !dbg !
   br i1 %83, label %86, label %84, !dbg !313
 
 84:                                               ; preds = %82
-  %85 = tail call i32 @compat_test(%struct.xdp_md* %0), !dbg !314
+  %85 = tail call i32 @compat_test(%struct.xdp_md* noundef %0), !dbg !314
   call void @llvm.dbg.value(metadata i32 %85, metadata !215, metadata !DIExpression()), !dbg !217
   br label %86, !dbg !315
 
@@ -421,11 +421,11 @@ attributes #5 = { nofree nosync nounwind readnone speculatable willreturn }
 
 !0 = !DIGlobalVariableExpression(var: !1, expr: !DIExpression())
 !1 = distinct !DIGlobalVariable(name: "conf", scope: !2, file: !3, line: 20, type: !28, isLocal: true, isDefinition: true)
-!2 = distinct !DICompileUnit(language: DW_LANG_C99, file: !3, producer: "Alpine clang version 13.0.1", isOptimized: true, runtimeVersion: 0, emissionKind: FullDebug, enums: !4, globals: !14, splitDebugInlining: false, nameTableKind: None)
-!3 = !DIFile(filename: "xdp-dispatcher.c", directory: "/root/multi-filters/lib/libxdp")
+!2 = distinct !DICompileUnit(language: DW_LANG_C99, file: !3, producer: "Ubuntu clang version 14.0.6", isOptimized: true, runtimeVersion: 0, emissionKind: FullDebug, enums: !4, globals: !14, splitDebugInlining: false, nameTableKind: None)
+!3 = !DIFile(filename: "xdp-dispatcher.c", directory: "/root/multi-filters/lib/libxdp", checksumkind: CSK_MD5, checksum: "b6ed117e39c1c72628611da72a4d5f5d")
 !4 = !{!5}
 !5 = !DICompositeType(tag: DW_TAG_enumeration_type, name: "xdp_action", file: !6, line: 5933, baseType: !7, size: 32, elements: !8)
-!6 = !DIFile(filename: "../../headers/linux/bpf.h", directory: "/root/multi-filters/lib/libxdp")
+!6 = !DIFile(filename: "../../headers/linux/bpf.h", directory: "/root/multi-filters/lib/libxdp", checksumkind: CSK_MD5, checksum: "19e7a278dd5e69adb087c419977e86e0")
 !7 = !DIBasicType(name: "unsigned int", size: 32, encoding: DW_ATE_unsigned)
 !8 = !{!9, !10, !11, !12, !13}
 !9 = !DIEnumerator(name: "XDP_ABORTED", value: 0)
@@ -450,11 +450,11 @@ attributes #5 = { nofree nosync nounwind readnone speculatable willreturn }
 !28 = !DIDerivedType(tag: DW_TAG_const_type, baseType: !29)
 !29 = !DIDerivedType(tag: DW_TAG_volatile_type, baseType: !30)
 !30 = distinct !DICompositeType(tag: DW_TAG_structure_type, name: "xdp_dispatcher_config", file: !31, line: 24, size: 992, elements: !32)
-!31 = !DIFile(filename: "../../headers/xdp/prog_dispatcher.h", directory: "/root/multi-filters/lib/libxdp")
+!31 = !DIFile(filename: "../../headers/xdp/prog_dispatcher.h", directory: "/root/multi-filters/lib/libxdp", checksumkind: CSK_MD5, checksum: "aaec112d5bc5c2d2bb62c79d8f95df8a")
 !32 = !{!33, !37, !38, !39, !40, !45, !46}
 !33 = !DIDerivedType(tag: DW_TAG_member, name: "magic", scope: !30, file: !31, line: 25, baseType: !34, size: 8)
 !34 = !DIDerivedType(tag: DW_TAG_typedef, name: "__u8", file: !35, line: 21, baseType: !36)
-!35 = !DIFile(filename: "/usr/include/asm-generic/int-ll64.h", directory: "")
+!35 = !DIFile(filename: "/usr/include/asm-generic/int-ll64.h", directory: "", checksumkind: CSK_MD5, checksum: "b810f270733e106319b67ef512c6246e")
 !36 = !DIBasicType(name: "unsigned char", size: 8, encoding: DW_ATE_unsigned_char)
 !37 = !DIDerivedType(tag: DW_TAG_member, name: "dispatcher_version", scope: !30, file: !31, line: 26, baseType: !34, size: 8, offset: 8)
 !38 = !DIDerivedType(tag: DW_TAG_member, name: "num_progs_enabled", scope: !30, file: !31, line: 27, baseType: !34, size: 8, offset: 16)
@@ -466,11 +466,11 @@ attributes #5 = { nofree nosync nounwind readnone speculatable willreturn }
 !44 = !DISubrange(count: 10)
 !45 = !DIDerivedType(tag: DW_TAG_member, name: "run_prios", scope: !30, file: !31, line: 30, baseType: !41, size: 320, offset: 352)
 !46 = !DIDerivedType(tag: DW_TAG_member, name: "program_flags", scope: !30, file: !31, line: 31, baseType: !41, size: 320, offset: 672)
-!47 = !{i32 7, !"Dwarf Version", i32 4}
+!47 = !{i32 7, !"Dwarf Version", i32 5}
 !48 = !{i32 2, !"Debug Info Version", i32 3}
 !49 = !{i32 1, !"wchar_size", i32 4}
 !50 = !{i32 7, !"frame-pointer", i32 2}
-!51 = !{!"Alpine clang version 13.0.1"}
+!51 = !{!"Ubuntu clang version 14.0.6"}
 !52 = distinct !DISubprogram(name: "prog0", scope: !3, file: !3, line: 26, type: !53, scopeLine: 26, flags: DIFlagPrototyped | DIFlagAllCallsDescribed, spFlags: DISPFlagDefinition | DISPFlagOptimized, unit: !2, retainedNodes: !64)
 !53 = !DISubroutineType(types: !54)
 !54 = !{!25, !55}

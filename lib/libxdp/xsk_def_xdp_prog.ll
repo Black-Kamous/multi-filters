@@ -15,7 +15,7 @@ target triple = "bpf"
 @llvm.compiler.used = appending global [5 x i8*] [i8* getelementptr inbounds ([4 x i8], [4 x i8]* @_license, i32 0, i32 0), i8* bitcast (%struct.anon.0* @_xsk_def_prog to i8*), i8* bitcast (i32 (%struct.xdp_md*)* @xsk_def_prog to i8*), i8* bitcast ([1 x i32]** @xsk_prog_version to i8*), i8* bitcast (%struct.anon* @xsks_map to i8*)], section "llvm.metadata"
 
 ; Function Attrs: nounwind
-define dso_local i32 @xsk_def_prog(%struct.xdp_md* nocapture readonly %0) #0 section "xdp" !dbg !74 {
+define dso_local i32 @xsk_def_prog(%struct.xdp_md* nocapture noundef readonly %0) #0 section "xdp" !dbg !74 {
   call void @llvm.dbg.value(metadata %struct.xdp_md* %0, metadata !87, metadata !DIExpression()), !dbg !88
   %2 = load volatile i32, i32* @refcnt, align 4, !dbg !89, !tbaa !91
   %3 = icmp eq i32 %2, 0, !dbg !89
@@ -24,7 +24,7 @@ define dso_local i32 @xsk_def_prog(%struct.xdp_md* nocapture readonly %0) #0 sec
 4:                                                ; preds = %1
   %5 = getelementptr inbounds %struct.xdp_md, %struct.xdp_md* %0, i64 0, i32 4, !dbg !96
   %6 = load i32, i32* %5, align 4, !dbg !96, !tbaa !97
-  %7 = tail call i64 inttoptr (i64 51 to i64 (i8*, i32, i64)*)(i8* bitcast (%struct.anon* @xsks_map to i8*), i32 %6, i64 2) #2, !dbg !99
+  %7 = tail call i64 inttoptr (i64 51 to i64 (i8*, i32, i64)*)(i8* noundef bitcast (%struct.anon* @xsks_map to i8*), i32 noundef %6, i64 noundef 2) #2, !dbg !99
   %8 = trunc i64 %7 to i32, !dbg !99
   br label %9, !dbg !100
 
@@ -46,11 +46,11 @@ attributes #2 = { nounwind }
 
 !0 = !DIGlobalVariableExpression(var: !1, expr: !DIExpression())
 !1 = distinct !DIGlobalVariable(name: "refcnt", scope: !2, file: !3, line: 27, type: !68, isLocal: false, isDefinition: true)
-!2 = distinct !DICompileUnit(language: DW_LANG_C99, file: !3, producer: "Alpine clang version 13.0.1", isOptimized: true, runtimeVersion: 0, emissionKind: FullDebug, enums: !4, globals: !14, splitDebugInlining: false, nameTableKind: None)
-!3 = !DIFile(filename: "xsk_def_xdp_prog.c", directory: "/root/multi-filters/lib/libxdp")
+!2 = distinct !DICompileUnit(language: DW_LANG_C99, file: !3, producer: "Ubuntu clang version 14.0.6", isOptimized: true, runtimeVersion: 0, emissionKind: FullDebug, enums: !4, globals: !14, splitDebugInlining: false, nameTableKind: None)
+!3 = !DIFile(filename: "xsk_def_xdp_prog.c", directory: "/root/multi-filters/lib/libxdp", checksumkind: CSK_MD5, checksum: "bce97ec18904cb0cd5d271e48243b250")
 !4 = !{!5}
 !5 = !DICompositeType(tag: DW_TAG_enumeration_type, name: "xdp_action", file: !6, line: 5933, baseType: !7, size: 32, elements: !8)
-!6 = !DIFile(filename: "../../headers/linux/bpf.h", directory: "/root/multi-filters/lib/libxdp")
+!6 = !DIFile(filename: "../../headers/linux/bpf.h", directory: "/root/multi-filters/lib/libxdp", checksumkind: CSK_MD5, checksum: "19e7a278dd5e69adb087c419977e86e0")
 !7 = !DIBasicType(name: "unsigned int", size: 32, encoding: DW_ATE_unsigned)
 !8 = !{!9, !10, !11, !12, !13}
 !9 = !DIEnumerator(name: "XDP_ABORTED", value: 0)
@@ -102,22 +102,22 @@ attributes #2 = { nounwind }
 !55 = distinct !DIGlobalVariable(name: "xsk_prog_version", scope: !2, file: !3, line: 44, type: !50, isLocal: false, isDefinition: true)
 !56 = !DIGlobalVariableExpression(var: !57, expr: !DIExpression())
 !57 = distinct !DIGlobalVariable(name: "bpf_redirect_map", scope: !2, file: !58, line: 1309, type: !59, isLocal: true, isDefinition: true)
-!58 = !DIFile(filename: "../libbpf/src/root/usr/include/bpf/bpf_helper_defs.h", directory: "/root/multi-filters/lib/libxdp")
+!58 = !DIFile(filename: "../libbpf/src/root/usr/include/bpf/bpf_helper_defs.h", directory: "/root/multi-filters/lib/libxdp", checksumkind: CSK_MD5, checksum: "32b0945df61015e3dd6be9ac5ea42778")
 !59 = !DIDerivedType(tag: DW_TAG_pointer_type, baseType: !60, size: 64)
 !60 = !DISubroutineType(types: !61)
 !61 = !{!62, !63, !64, !66}
-!62 = !DIBasicType(name: "long int", size: 64, encoding: DW_ATE_signed)
+!62 = !DIBasicType(name: "long", size: 64, encoding: DW_ATE_signed)
 !63 = !DIDerivedType(tag: DW_TAG_pointer_type, baseType: null, size: 64)
 !64 = !DIDerivedType(tag: DW_TAG_typedef, name: "__u32", file: !65, line: 27, baseType: !7)
-!65 = !DIFile(filename: "/usr/include/asm-generic/int-ll64.h", directory: "")
+!65 = !DIFile(filename: "/usr/include/asm-generic/int-ll64.h", directory: "", checksumkind: CSK_MD5, checksum: "b810f270733e106319b67ef512c6246e")
 !66 = !DIDerivedType(tag: DW_TAG_typedef, name: "__u64", file: !65, line: 31, baseType: !67)
-!67 = !DIBasicType(name: "long long unsigned int", size: 64, encoding: DW_ATE_unsigned)
+!67 = !DIBasicType(name: "unsigned long long", size: 64, encoding: DW_ATE_unsigned)
 !68 = !DIDerivedType(tag: DW_TAG_volatile_type, baseType: !28)
-!69 = !{i32 7, !"Dwarf Version", i32 4}
+!69 = !{i32 7, !"Dwarf Version", i32 5}
 !70 = !{i32 2, !"Debug Info Version", i32 3}
 !71 = !{i32 1, !"wchar_size", i32 4}
 !72 = !{i32 7, !"frame-pointer", i32 2}
-!73 = !{!"Alpine clang version 13.0.1"}
+!73 = !{!"Ubuntu clang version 14.0.6"}
 !74 = distinct !DISubprogram(name: "xsk_def_prog", scope: !3, file: !3, line: 31, type: !75, scopeLine: 32, flags: DIFlagPrototyped | DIFlagAllCallsDescribed, spFlags: DISPFlagDefinition | DISPFlagOptimized, unit: !2, retainedNodes: !86)
 !75 = !DISubroutineType(types: !76)
 !76 = !{!28, !77}

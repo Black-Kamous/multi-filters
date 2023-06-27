@@ -15,7 +15,7 @@ target triple = "bpf"
 @llvm.compiler.used = appending global [5 x i8*] [i8* getelementptr inbounds ([4 x i8], [4 x i8]* @_license, i32 0, i32 0), i8* bitcast (%struct.anon.0* @_xsk_def_prog to i8*), i8* bitcast (i32 (%struct.xdp_md*)* @xsk_def_prog to i8*), i8* bitcast ([1 x i32]** @xsk_prog_version to i8*), i8* bitcast (%struct.anon* @xsks_map to i8*)], section "llvm.metadata"
 
 ; Function Attrs: nounwind
-define dso_local i32 @xsk_def_prog(%struct.xdp_md* nocapture readonly %0) #0 section "xdp" !dbg !81 {
+define dso_local i32 @xsk_def_prog(%struct.xdp_md* nocapture noundef readonly %0) #0 section "xdp" !dbg !81 {
   %2 = alloca i32, align 4
   call void @llvm.dbg.value(metadata %struct.xdp_md* %0, metadata !94, metadata !DIExpression()), !dbg !96
   %3 = bitcast i32* %2 to i8*, !dbg !97
@@ -30,14 +30,14 @@ define dso_local i32 @xsk_def_prog(%struct.xdp_md* nocapture readonly %0) #0 sec
 
 8:                                                ; preds = %1
   call void @llvm.dbg.value(metadata i32* %2, metadata !95, metadata !DIExpression(DW_OP_deref)), !dbg !96
-  %9 = call i8* inttoptr (i64 1 to i8* (i8*, i8*)*)(i8* bitcast (%struct.anon* @xsks_map to i8*), i8* nonnull %3) #3, !dbg !109
+  %9 = call i8* inttoptr (i64 1 to i8* (i8*, i8*)*)(i8* noundef bitcast (%struct.anon* @xsks_map to i8*), i8* noundef nonnull %3) #3, !dbg !109
   %10 = icmp eq i8* %9, null, !dbg !109
   br i1 %10, label %15, label %11, !dbg !111
 
 11:                                               ; preds = %8
   %12 = load i32, i32* %2, align 4, !dbg !112, !tbaa !105
   call void @llvm.dbg.value(metadata i32 %12, metadata !95, metadata !DIExpression()), !dbg !96
-  %13 = call i64 inttoptr (i64 51 to i64 (i8*, i32, i64)*)(i8* bitcast (%struct.anon* @xsks_map to i8*), i32 %12, i64 0) #3, !dbg !113
+  %13 = call i64 inttoptr (i64 51 to i64 (i8*, i32, i64)*)(i8* noundef bitcast (%struct.anon* @xsks_map to i8*), i32 noundef %12, i64 noundef 0) #3, !dbg !113
   %14 = trunc i64 %13 to i32, !dbg !113
   br label %15, !dbg !114
 
@@ -67,11 +67,11 @@ attributes #3 = { nounwind }
 
 !0 = !DIGlobalVariableExpression(var: !1, expr: !DIExpression())
 !1 = distinct !DIGlobalVariable(name: "refcnt", scope: !2, file: !3, line: 27, type: !75, isLocal: false, isDefinition: true)
-!2 = distinct !DICompileUnit(language: DW_LANG_C99, file: !3, producer: "Alpine clang version 13.0.1", isOptimized: true, runtimeVersion: 0, emissionKind: FullDebug, enums: !4, globals: !14, splitDebugInlining: false, nameTableKind: None)
-!3 = !DIFile(filename: "xsk_def_xdp_prog_5.3.c", directory: "/root/multi-filters/lib/libxdp")
+!2 = distinct !DICompileUnit(language: DW_LANG_C99, file: !3, producer: "Ubuntu clang version 14.0.6", isOptimized: true, runtimeVersion: 0, emissionKind: FullDebug, enums: !4, globals: !14, splitDebugInlining: false, nameTableKind: None)
+!3 = !DIFile(filename: "xsk_def_xdp_prog_5.3.c", directory: "/root/multi-filters/lib/libxdp", checksumkind: CSK_MD5, checksum: "bae3de4712c516b7b8ed19a2257b01b6")
 !4 = !{!5}
 !5 = !DICompositeType(tag: DW_TAG_enumeration_type, name: "xdp_action", file: !6, line: 5933, baseType: !7, size: 32, elements: !8)
-!6 = !DIFile(filename: "../../headers/linux/bpf.h", directory: "/root/multi-filters/lib/libxdp")
+!6 = !DIFile(filename: "../../headers/linux/bpf.h", directory: "/root/multi-filters/lib/libxdp", checksumkind: CSK_MD5, checksum: "19e7a278dd5e69adb087c419977e86e0")
 !7 = !DIBasicType(name: "unsigned int", size: 32, encoding: DW_ATE_unsigned)
 !8 = !{!9, !10, !11, !12, !13}
 !9 = !DIEnumerator(name: "XDP_ABORTED", value: 0)
@@ -123,7 +123,7 @@ attributes #3 = { nounwind }
 !55 = distinct !DIGlobalVariable(name: "xsk_prog_version", scope: !2, file: !3, line: 49, type: !50, isLocal: false, isDefinition: true)
 !56 = !DIGlobalVariableExpression(var: !57, expr: !DIExpression())
 !57 = distinct !DIGlobalVariable(name: "bpf_map_lookup_elem", scope: !2, file: !58, line: 55, type: !59, isLocal: true, isDefinition: true)
-!58 = !DIFile(filename: "../libbpf/src/root/usr/include/bpf/bpf_helper_defs.h", directory: "/root/multi-filters/lib/libxdp")
+!58 = !DIFile(filename: "../libbpf/src/root/usr/include/bpf/bpf_helper_defs.h", directory: "/root/multi-filters/lib/libxdp", checksumkind: CSK_MD5, checksum: "32b0945df61015e3dd6be9ac5ea42778")
 !59 = !DIDerivedType(tag: DW_TAG_pointer_type, baseType: !60, size: 64)
 !60 = !DISubroutineType(types: !61)
 !61 = !{!62, !62, !63}
@@ -135,17 +135,17 @@ attributes #3 = { nounwind }
 !67 = !DIDerivedType(tag: DW_TAG_pointer_type, baseType: !68, size: 64)
 !68 = !DISubroutineType(types: !69)
 !69 = !{!70, !62, !71, !73}
-!70 = !DIBasicType(name: "long int", size: 64, encoding: DW_ATE_signed)
+!70 = !DIBasicType(name: "long", size: 64, encoding: DW_ATE_signed)
 !71 = !DIDerivedType(tag: DW_TAG_typedef, name: "__u32", file: !72, line: 27, baseType: !7)
-!72 = !DIFile(filename: "/usr/include/asm-generic/int-ll64.h", directory: "")
+!72 = !DIFile(filename: "/usr/include/asm-generic/int-ll64.h", directory: "", checksumkind: CSK_MD5, checksum: "b810f270733e106319b67ef512c6246e")
 !73 = !DIDerivedType(tag: DW_TAG_typedef, name: "__u64", file: !72, line: 31, baseType: !74)
-!74 = !DIBasicType(name: "long long unsigned int", size: 64, encoding: DW_ATE_unsigned)
+!74 = !DIBasicType(name: "unsigned long long", size: 64, encoding: DW_ATE_unsigned)
 !75 = !DIDerivedType(tag: DW_TAG_volatile_type, baseType: !28)
-!76 = !{i32 7, !"Dwarf Version", i32 4}
+!76 = !{i32 7, !"Dwarf Version", i32 5}
 !77 = !{i32 2, !"Debug Info Version", i32 3}
 !78 = !{i32 1, !"wchar_size", i32 4}
 !79 = !{i32 7, !"frame-pointer", i32 2}
-!80 = !{!"Alpine clang version 13.0.1"}
+!80 = !{!"Ubuntu clang version 14.0.6"}
 !81 = distinct !DISubprogram(name: "xsk_def_prog", scope: !3, file: !3, line: 31, type: !82, scopeLine: 32, flags: DIFlagPrototyped | DIFlagAllCallsDescribed, spFlags: DISPFlagDefinition | DISPFlagOptimized, unit: !2, retainedNodes: !93)
 !82 = !DISubroutineType(types: !83)
 !83 = !{!28, !84}

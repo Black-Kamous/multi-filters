@@ -10,7 +10,7 @@
 #include <linux/if.h>
 #include <net/if.h>
 
-#include <bpf/libbpf.h>
+#include <libbpf.h>
 #include <xdp/libxdp.h>
 #include <linux/err.h>
 #include <sys/resource.h>
@@ -20,7 +20,7 @@
 static int strrev(char *src, int len)
 {
     char *tmp = malloc(len);
-    strncpy(tmp, src, len);
+    memcpy(tmp, src, len);
     for (int i = 0; i < len; ++i)
     {
         src[i] = tmp[len - 1 - i];
@@ -135,7 +135,7 @@ int filter__set_map(struct filter__program_with_map *f, const char *map_filename
             printf("rev qname %s\n", buf);
             memset(qlk.rev_suf, 0, SUF_MAXLEN);
             qlk.prefixlen = len - 1;
-            strncpy(qlk.rev_suf, buf, len);
+            memcpy(qlk.rev_suf, buf, len);
             bpf_map_update_elem(f->map_fd, &qlk, &cnt, BPF_ANY);
             memset(buf, 0, SUF_MAXLEN);
             cnt++;
@@ -268,9 +268,9 @@ char filters_progfiles[3][256] = {
     "hc_filter.o"
 };
 
-#define SET_QN_FILE(fn) strncpy(filters_progfiles[0],fn,256)
-#define SET_UR_FILE(fn) strncpy(filters_progfiles[1],fn,256)
-#define SET_HC_FILE(fn) strncpy(filters_progfiles[2],fn,256)
+#define SET_QN_FILE(fn) memcpy(filters_progfiles[0],fn,256)
+#define SET_UR_FILE(fn) memcpy(filters_progfiles[1],fn,256)
+#define SET_HC_FILE(fn) memcpy(filters_progfiles[2],fn,256)
 #define GET_QN_FILE(fn) (filters_progfiles[0])
 #define GET_UR_FILE(fn) (filters_progfiles[1])
 #define GET_HC_FILE(fn) (filters_progfiles[2])
@@ -281,9 +281,9 @@ char filters_mapfiles[3][256] = {
     {0}
 };
 
-#define SET_QN_MAPFILE(fn) strncpy(filters_mapfiles[0],fn,256)
-#define SET_UR_MAPFILE(fn) strncpy(filters_mapfiles[1],fn,256)
-#define SET_HC_MAPFILE(fn) strncpy(filters_mapfiles[2],fn,256)
+#define SET_QN_MAPFILE(fn) memcpy(filters_mapfiles[0],fn,256)
+#define SET_UR_MAPFILE(fn) memcpy(filters_mapfiles[1],fn,256)
+#define SET_HC_MAPFILE(fn) memcpy(filters_mapfiles[2],fn,256)
 #define GET_QN_MAPFILE(fn) (filters_mapfiles[0])
 #define GET_UR_MAPFILE(fn) (filters_mapfiles[1])
 #define GET_HC_MAPFILE(fn) (filters_mapfiles[2])
