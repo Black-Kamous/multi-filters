@@ -129,14 +129,14 @@ int filter__set_map(struct filter__program_with_map *f, const char *map_filename
         while (fgets(buf, SUF_MAXLEN, fp) != NULL)
         {
             len = strlen(buf);
-            buf[len] = '\0'; /*去掉换行符*/
+            buf[len-1] = '\0'; /*去掉换行符*/
             printf("qname %s\n", buf);
-            strrev(buf, len);
+            strrev(buf, len-1);
             printf("rev qname %s\n", buf);
             memset(qlk.rev_suf, 0, SUF_MAXLEN);
             qlk.prefixlen = len - 1;
-            memcpy(qlk.rev_suf, buf, len);
-            bpf_map_update_elem(f->map_fd, &qlk, &cnt, BPF_ANY);
+            memcpy(qlk.rev_suf, buf, len-1);
+            bpf_map_update_elem(f->map_fd, &qlk, &qlk, BPF_ANY);
             memset(buf, 0, SUF_MAXLEN);
             cnt++;
         }

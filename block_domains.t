@@ -1,1 +1,2 @@
-qname.com
+qname.cn
+sd.cn

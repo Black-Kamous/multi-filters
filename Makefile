@@ -1,3 +1,5 @@
+all: myloader unload
+
 myloader: myloader.c myloader.h
 	gcc -Wall -O2 -g -I../lib/libbpf/src/root/usr/include -DHAVE_ZLIB -DHAVE_ELF -std=gnu11 -Wextra -Werror \
 	-DBPF_DIR_MNT=\"/sys/fs/bpf\" -DBPF_OBJECT_PATH=\"/usr/local/lib/bpf\" -DMAX_DISPATCHER_ACTIONS=10 -DTOOLS_VERSION=\""1.3.0"\" \
@@ -9,7 +11,7 @@ myloader: myloader.c myloader.h
 	-o myloader myloader.c  -l:libxdp.a  -lm -l:libbpf.a -L/lib -lz -lelf
 
 unload: 
-	ip link set dev eth0 xdpgeneric off
+	./myloader --iface=eth0 --unload-all
 
 show: 
 	ip link show dev eth0
