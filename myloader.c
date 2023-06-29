@@ -151,10 +151,12 @@ int filter__set_map(struct filter__program_with_map *f, const char *map_filename
             len = strlen(buf);
             if(len <= 0)
                 break;
-            buf[len] = '\0'; /*去掉换行符*/
+            buf[len-1] = '\0'; /*去掉换行符*/
             
             __u32 dst;
             inet_pton(AF_INET, buf, &dst);
+            printf("ip %s\n", buf);
+            printf("ip converted %x\n", dst);
             bpf_map_update_elem(f->map_fd, &dst, &hval, BPF_ANY);
             memset(buf, 0, PREF_MAXLEN);
             cnt++;
@@ -477,7 +479,7 @@ retry:
     {
         if(pwms[i]){
             printf("finding map\n");
-            tmpobj = xdp_program__bpf_obj(progs[cnt]);
+            tmpobj = xdp_program__bpf_obj(pwms[i]->program);
             map = bpf_object__find_map_by_name(tmpobj, map_name);
             map_fd = bpf_map__fd(map);
             map_type = bpf_map__type(map);
