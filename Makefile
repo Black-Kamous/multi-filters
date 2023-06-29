@@ -10,6 +10,14 @@ myloader: myloader.c myloader.h
 	-I./lib/../headers -I./lib/libbpf/src  -L./lib/libbpf/src -L./lib/libxdp \
 	-o myloader myloader.c  -l:libxdp.a  -lm -l:libbpf.a -L/lib -lz -lelf
 
+filters:
+	make -C qname_filter
+	make -C ur_filter
+	make -C hc_filter
+	cp qname_filter/qn.o .
+	cp ur_filter/ur.o .
+	cp hc_filter/raw_hc.o .
+
 unload: 
 	./myloader --iface=eth0 --unload-all
 

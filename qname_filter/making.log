@@ -1,0 +1,13 @@
+gcc -Wall -I../libbpf/src//build/usr/include/ -g -I../headers/ -L../libbpf/src/ -o xdp_pass_user ../common//common_params.o \
+ xdp_pass_user.c -l:libbpf.a -lelf 
+clang -S \
+    -target bpf \
+    -D __BPF_TRACING__ \
+    -I../libbpf/src//build/usr/include/ -I../headers/ \
+    -Wall \
+    -Wno-unused-value \
+    -Wno-pointer-sign \
+    -Wno-compare-distinct-pointer-types \
+    -Werror \
+    -O2 -emit-llvm -c -g -o xdp_pass_kern.ll xdp_pass_kern.c
+llc -march=bpf -filetype=obj -o xdp_pass_kern.o xdp_pass_kern.ll
